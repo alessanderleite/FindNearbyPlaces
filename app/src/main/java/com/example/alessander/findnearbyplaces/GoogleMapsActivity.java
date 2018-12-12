@@ -109,7 +109,7 @@ public class GoogleMapsActivity extends FragmentActivity implements
                 }
                 else {
 
-                    Toast.makeText(this, "please write anu location name...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "please write any location name...", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
