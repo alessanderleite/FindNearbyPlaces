@@ -2,9 +2,15 @@ package com.example.alessander.findnearbyplaces;
 
 import android.os.AsyncTask;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 public class GetNearbyPlaces extends AsyncTask<Object, String, String> {
 
@@ -30,6 +36,33 @@ public class GetNearbyPlaces extends AsyncTask<Object, String, String> {
     @Override
     protected void onPostExecute(String s) {
 
-        super.onPostExecute(s);
+        List<HashMap<String, String>> nearByPlacesList = null;
+        DataParser dataParser = new DataParser();
+        nearByPlacesList = dataParser.parse(s);
+
+        displayNearbyPlaces(nearByPlacesList);
+    }
+
+    private void displayNearbyPlaces(List<HashMap<String, String>> nearByPlacesList) {
+
+        for (int i = 0; i < nearByPlacesList.size(); i++) {
+
+
+            MarkerOptions markerOptions = new MarkerOptions();
+
+            HashMap<String, String> googleNearbyPlace = nearByPlacesList.get(i);
+            String nameOfPlace = googleNearbyPlace.get("place_name");
+            String vicinity = googleNearbyPlace.get("vicinity");
+            double lat = Double.parseDouble(googleNearbyPlace.get("lat"));
+            double lng = Double.parseDouble(googleNearbyPlace.get("lng"));
+
+            LatLng latLng = new LatLng(lat, lng);
+            markerOptions.position(latLng);
+            markerOptions.title(nameOfPlace + " : " + vicinity);
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            mMap.addMarker(markerOptions);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        }
     }
 }
