@@ -46,6 +46,8 @@ public class GoogleMapsActivity extends FragmentActivity implements
     private Location lastLocation;
     private Marker currentUserLocationMarker;
     private static final int Request_User_Location_Code = 99;
+    private double latitide, longitude;
+    private int proximityRadius = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,10 @@ public class GoogleMapsActivity extends FragmentActivity implements
     }
 
     public void onClick(View v) {
+
+        String hospital = "hospital", school = "school", restaurant = "restaurant";
+        Object transferData[] = new Object[2];
+        GetNearbyPlaces getNearbyPlaces = new GetNearbyPlaces();
 
         switch (v.getId()) {
 
@@ -112,7 +118,52 @@ public class GoogleMapsActivity extends FragmentActivity implements
                     Toast.makeText(this, "please write any location name...", Toast.LENGTH_SHORT).show();
                 }
                 break;
+
+            case R.id.hospitals_nearby:
+                mMap.clear();
+                String url = getUrl(latitide, longitude, hospital);
+                transferData[0] = mMap;
+                transferData[1] = url;
+
+                getNearbyPlaces.execute(transferData);
+                Toast.makeText(this, "Searching for Nearby Hospitals...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Showing Nearby Hospitals...", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.schools_nearby:
+                mMap.clear();
+                String url = getUrl(latitide, longitude, school);
+                transferData[0] = mMap;
+                transferData[1] = url;
+
+                getNearbyPlaces.execute(transferData);
+                Toast.makeText(this, "Searching for Nearby Schools...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Showing Nearby Schools...", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.restaurants_nearby:
+                mMap.clear();
+                String url = getUrl(latitide, longitude, restaurant);
+                transferData[0] = mMap;
+                transferData[1] = url;
+
+                getNearbyPlaces.execute(transferData);
+                Toast.makeText(this, "Searching for Nearby Restaurants...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Showing Nearby Restaurants...", Toast.LENGTH_SHORT).show();
+                break;
         }
+    }
+
+    private String getUrl(double latitide, double longitude, String nearbyPlace) {
+
+        StringBuffer googleURL = new StringBuffer("https://maps.googleapis.com/maps/api/place/findplacefromtext/json?");
+        googleURL.append("location" + latitide + "," + longitude);
+        googleURL.append("%radius=" + proximityRadius);
+        googleURL.append("%type=" + nearbyPlace);
+        googleURL.append("%sensor=true");
+        googleURL.append("%key=" + "");
+
+        return googleURL.toString();
     }
 
     @Override
